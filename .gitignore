@@ -1,0 +1,6 @@
+*.s#?
+*.b#?
+*.epf
+*.pro
+datasheets/*
+TokyoTime
