@@ -1,0 +1,30 @@
+Partlist
+
+Exported from TokyoTime.sch at 27.01.12 09:18
+
+EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
+
+Part      Value            Device         Package              Library  Sheet
+
+7SEG      OSL40562-LB      7SEG           OSL40562             Robin    1
+ATMEGA328                  ATMEGA168-20P  DIL28-3              adafruit 1
+BATT1     CR2032           BATTERY-HOLDER CR2032-HOLDER-20MM   Robin    1
+BUTTON1                    TAC_SWITCHPTH  TACTILE-PTH          SparkFun 1
+BUZZ1     PKM13EPYH4000-A0 BUZZER13MM     PIEZO-MURATA-13MM    Robin    1
+C1        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
+C2        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
+C3        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
+C4        33uF             CAP_POLPTH2    CPOL-RADIAL-10UF-25V SparkFun 1
+C5        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
+DC_JACK   2.1MMJACKTHM     2.1MMJACKTHM   PJ-102A              adafruit 1
+JP1                        M06SIP         1X06                 SparkFun 1
+PWR_OPT                    M03PTH         1X03                 SparkFun 1
+Q1                         CRYSTAL        CRYSTAL-6X2-TH       Robin    1
+R1        10K              R-US_0207/10   0207/10              adafruit 1
+R2        1K               R-US_0207/10   0207/10              adafruit 1
+R3        10K              R-US_0207/10   0207/10              adafruit 1
+REG1      TA48M033F        REGULATOR      HSIP3-P-2.30B        Robin    1
+STAND1                     M05PTH         1X05                 SparkFun 1
+STAND2                     M05PTH         1X05                 SparkFun 1
+TEMP1     LM61TO92         LM61TO92       TO92-                Robin    1
+TWI                        M05PTH         1X05                 SparkFun 1
