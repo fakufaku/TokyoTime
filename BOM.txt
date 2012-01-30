@@ -1,6 +1,6 @@
 Partlist
 
-Exported from TokyoTime.sch at 27.01.12 09:18
+Exported from TokyoTime.sch at 31.01.12 08:15
 
 EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
 
@@ -17,14 +17,14 @@ C3        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
 C4        33uF             CAP_POLPTH2    CPOL-RADIAL-10UF-25V SparkFun 1
 C5        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
 DC_JACK   2.1MMJACKTHM     2.1MMJACKTHM   PJ-102A              adafruit 1
-JP1                        M06SIP         1X06                 SparkFun 1
 PWR_OPT                    M03PTH         1X03                 SparkFun 1
-Q1                         CRYSTAL        CRYSTAL-6X2-TH       Robin    1
+Q1        32.768kHz        CRYSTAL        CRYSTAL-6X2-TH       Robin    1
 R1        10K              R-US_0207/10   0207/10              adafruit 1
 R2        1K               R-US_0207/10   0207/10              adafruit 1
 R3        10K              R-US_0207/10   0207/10              adafruit 1
 REG1      TA48M033F        REGULATOR      HSIP3-P-2.30B        Robin    1
-STAND1                     M05PTH         1X05                 SparkFun 1
-STAND2                     M05PTH         1X05                 SparkFun 1
+SERIAL1                    M06SIP         1X06                 SparkFun 1
+STAND1                     M06SIP         1X06                 SparkFun 1
+STAND2                     M06SIP         1X06                 SparkFun 1
 TEMP1     LM61TO92         LM61TO92       TO92-                Robin    1
-TWI                        M05PTH         1X05                 SparkFun 1
+TWI                        PINHD-2X3      2X03                 pinhead  1
