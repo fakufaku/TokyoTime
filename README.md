@@ -14,6 +14,12 @@ In addition it can be powered from a CR2032 battery, or from a 5V wall-wart.
 
 This project builds on the [BigTime](https://github.com/nseidle/BigTime) project by @nseidle, but the whole board was redesigned from scratch.
 
+### Parts and footprints
+
+All the parts can be bought at [Akizuki Denshi](http://www.akizukidenshi.com/) in Akihabara, Tokyo.
+
+*Warning* I still need to check the footprint for all the parts.
+
 ### License
 
 (c) 2011, Robin Scheibler
