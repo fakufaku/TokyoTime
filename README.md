@@ -17,5 +17,5 @@ This project builds on the [BigTime](https://github.com/nseidle/BigTime) project
 ### License
 
 (c) 2011, Robin Scheibler
-This work is realeased under the CC-BY-SA 3.0 License.
-The full license can be found at http://creativecommons.org/licenses/by-sa/3.0/us/
+
+This work is realeased under the [CC-BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/us/) License.
