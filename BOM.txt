@@ -24,7 +24,7 @@ R2        1K               R-US_0207/10   0207/10              adafruit 1
 R3        10K              R-US_0207/10   0207/10              adafruit 1
 REG1      TA48M033F        REGULATOR      HSIP3-P-2.30B        Robin    1
 SERIAL1                    M06SIP         1X06                 SparkFun 1
-STAND1                     M06SIP         1X06                 SparkFun 1
-STAND2                     M06SIP         1X06                 SparkFun 1
+STAND1                     M04SIP         1X04                 SparkFun 1
+STAND2                     M04SIP         1X04                 SparkFun 1
 TEMP1     LM61TO92         LM61TO92       TO92-                Robin    1
 TWI                        PINHD-2X3      2X03                 pinhead  1
