@@ -1,30 +1,30 @@
 Partlist
 
-Exported from TokyoTime.sch at 31.01.12 08:15
+Exported from TokyoTime.sch at 27.07.12 09:10
 
 EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
 
-Part      Value            Device         Package              Library  Sheet   Akizuki
+Part      Value            Device         Package              Library  Sheet
 
-7SEG      OSL40562-LB      7SEG           OSL40562             Robin    1       http://akizukidenshi.com/catalog/g/gI-04449/
-ATMEGA328                  ATMEGA328      DIL28-3              adafruit 1       http://akizukidenshi.com/catalog/g/gI-03142/
-BATT1     CR2032           BATTERY-HOLDER CR2032-HOLDER-20MM   Robin    1       http://akizukidenshi.com/catalog/g/gP-00706/
-BUTTON1                    TAC-SWITCH     TACTILE-PTH          SparkFun 1       http://akizukidenshi.com/catalog/g/gP-03649/
-BUZZ1     PKM13EPYH4000-A0 BUZZER         PIEZO-MURATA-13MM    Robin    1       http://akizukidenshi.com/catalog/g/gP-04118/
-C1        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1       http://akizukidenshi.com/catalog/g/gP-00090/
-C2        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1       http://akizukidenshi.com/catalog/g/gP-00090/
-C3        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1       http://akizukidenshi.com/catalog/g/gP-00090/
-C4        33uF             CAP_POLPTH2    CPOL-RADIAL-10UF-25V SparkFun 1       included with regulator
-C5        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1       included with regulator
-DC_JACK   2.1MMJACKTHM     2.1MMJACKTHM   PJ-102A              adafruit 1       http://akizukidenshi.com/catalog/g/gC-00077/
-PWR_OPT                    PIN-HEADER     1X03                 SparkFun 1       http://akizukidenshi.com/catalog/g/gC-00167/
-Q1        32.768kHz        CRYSTAL        CRYSTAL-6X2-TH       Robin    1       http://akizukidenshi.com/catalog/g/gP-04006/
-R1        10K              R-US_0207/10   0207/10              adafruit 1       http://akizukidenshi.com/catalog/g/gR-25103/
-R2        1K               R-US_0207/10   0207/10              adafruit 1       http://akizukidenshi.com/catalog/g/gR-25102/
-R3        10K              R-US_0207/10   0207/10              adafruit 1       http://akizukidenshi.com/catalog/g/gR-25103/
-REG1      TA48M033F        REGULATOR      HSIP3-P-2.30B        Robin    1       http://akizukidenshi.com/catalog/g/gI-00538/
-SERIAL1                    PIN-HEADER     1X06                 SparkFun 1       http://akizukidenshi.com/catalog/g/gC-00167/
-STAND1                     PIN-HEADER     1X04                 SparkFun 1       http://akizukidenshi.com/catalog/g/gC-00167/
-STAND2                     PIN-HEADER     1X04                 SparkFun 1       http://akizukidenshi.com/catalog/g/gC-00167/
-TEMP1     LM61CIZ          LM61TO92       TO92-                Robin    1       http://akizukidenshi.com/catalog/g/gI-02726/
-TWI                        PIN-HEADER     2X03                 pinhead  1       http://akizukidenshi.com/catalog/g/gC-00082/
+7SEG      OSL40562-LB      7SEG           OSL40562             Robin    1
+ATMEGA328                  ATMEGA168-20P  DIL28-3              adafruit 1
+BATT1     CR2032           BATTERY-HOLDER CR2032-HOLDER-20MM   Robin    1
+BUTTON1                    TAC_SWITCHPTH  TACTILE-PTH          SparkFun 1
+BUZZ1     PKM13EPYH4000-A0 BUZZER13MM     PIEZO-MURATA-13MM    Robin    1
+C1        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
+C2        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
+C3        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
+C4        33uF             CAP_POLPTH2    CPOL-RADIAL-10UF-25V SparkFun 1
+C5        0.1uF            CAPPTH         CAP-PTH-SMALL        SparkFun 1
+DC_JACK   2.1MMJACKTHM     2.1MMJACKTHM   PJ-102A              adafruit 1
+PWR_OPT                    M03PTH         1X03                 SparkFun 1
+Q1        32.768kHz        CRYSTAL8X3     CRYSTAL-8X3-TH       Robin    1
+R1        10K              R-US_0207/10   0207/10              adafruit 1
+R2        1K               R-US_0207/10   0207/10              adafruit 1
+R3        10K              R-US_0207/10   0207/10              adafruit 1
+REG1      TA48M033F        REGULATOR      HSIP3-P-2.30B        Robin    1
+SERIAL1                    M06SIP         1X06                 SparkFun 1
+STAND1                     M04PTH         1X04                 SparkFun 1
+STAND2                     M04PTH         1X04                 SparkFun 1
+TEMP1     LM61TO92         LM61TO92       TO92-                Robin    1
+TWI                        PINHD-2X3      2X03                 pinhead  1
