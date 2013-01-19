@@ -66,13 +66,15 @@
 #define TRUE 1
 #define FALSE 0
 
-#define ALARM_ENABLE 0
+#define ALARM_ENABLE 1
 
 //Set the 12hourMode to false for military/world time. Set it to true for American 12 hour time.
 int TwelveHourMode = FALSE;
 
 //Set this variable to change how long the time is shown on the watch face. In milliseconds so 1677 = 1.677 seconds
-int show_time_length = 2000;
+int show_time_length = 700;
+int show_temp_length = 2000;
+int show_color_length = 2000;
 int show_the_time = FALSE;
 
 //You can set always_on to true and the display will stay on all the time
@@ -84,11 +86,13 @@ int minutes = 12;
 int hours = 8;
 
 // The alarm parameters
-int alarm_hours = 0;     // set to -1 to disable alarm
-int alarm_minutes = 0;   // set to -1 to disable alarm
+int alarm_hours = 8;     // set to -1 to disable alarm
+int alarm_minutes = 14;   // set to -1 to disable alarm
+int alarm_on = FALSE;
 int buzzing = FALSE;
 int buzz_timer;
 int buzz_seconds;
+int buzz_snoozed = FALSE;
 
 // now we need a push counter to offer more functionalities
 int push_counter = 0;
@@ -162,7 +166,8 @@ SIGNAL(INT0_vect)
   //if(show_the_time == FALSE) 
   show_the_time = TRUE;
   // turn buzzer off (in case alarm is ringing)
-  buzzing = FALSE;
+  if (buzzing)
+    buzz_snoozed = TRUE;
   // increase the push counter
   push_counter++;
 }
@@ -209,9 +214,15 @@ void setup()
   // set the power pin for the temperature sensor
   pinMode(temp_pwr, OUTPUT);
   digitalWrite(temp_pwr, HIGH);
-  // set the ADC reference to internal 1.1 for the case we use
-  // the battery and no precise voltage is available
-  // This will cut the upper range of the sensor, but it's okay
+
+  // we set the ADC reference to 3.3V
+  // this does not give correct temperature
+  // when running on the battery
+  analogReference(DEFAULT);
+
+
+  // set buzzer as digital Output
+  pinMode(buzzer, OUTPUT);
 
   //Power down various bits of hardware to lower power usage  
   set_sleep_mode(SLEEP_MODE_PWR_SAVE);
@@ -272,8 +283,6 @@ void setup()
 
   showTime(); //Show the current time for a few seconds
 
-  Serial.begin(9600);
-
   sei(); //Enable global interrupts
 
 }
@@ -284,34 +293,66 @@ void loop()
     sleep_mode(); //Stop everything and go to sleep. Wake up if the Timer2 buffer overflows or if you hit the button
 
 #if ALARM_ENABLE
-  // Control the buzzer
-  if (!buzzing && (alarm_hours == hours && alarm_minutes == minutes))
+  if (alarm_on)
   {
-    buzzing = 1;
-    buzz_timer = millis();
-    buzz_seconds = 0;
-  }
-
-  if (buzzing)
-  {
-    int T = millis() - buzz_timer;
-    if (T < 0)
-      T = INT_MAX + T;
-
-    //if (T%500 > 250)
-      tone(buzzer, 4000);
-    //else
-      //noTone(buzzer);
-
-    if (T > 1000)
+    // Control the buzzer
+    if (!buzzing && (alarm_hours == hours && alarm_minutes == minutes))
     {
-      buzz_seconds++;
+      buzzing = TRUE;
       buzz_timer = millis();
+      buzz_seconds = 0;
+    }
+    
+    if (buzzing && !buzz_snoozed)
+    {
+      // We have to excite the buzzer manually
+      // because the tone function can't be used
+      // since TIMER2 is occupied by the RTC
+      int k = 400;
+      while (k-- > 0)
+      {
+        PORTB |= _BV(PORTB1);
+        delayMicroseconds(100);
+        PORTB &= ~_BV(PORTB1);
+        delayMicroseconds(100);
+      }
+      delay(100);
+      k = 400;
+      while (k-- > 0)
+      {
+        PORTB |= _BV(PORTB1);
+        delayMicroseconds(100);
+        PORTB &= ~_BV(PORTB1);
+        delayMicroseconds(100);
+      }
+
+      // measure how long the buzzer has been running
+      long T = millis() - buzz_timer;
+      if (T < 0)
+        T = LONG_MAX + T;
+        
+      if (T > 1000)
+      {
+        buzz_seconds += 1;
+        buzz_timer = millis();
+      }
+
+      // Do not buzz longer than 30 minutes
+      if (buzz_seconds > 1800)
+        buzzing = FALSE;
+
     }
 
-    if (buzz_seconds > 6000)
+    // If we hit snooze and time is over a minute
+    // reset the buzzer
+    if (buzz_seconds > 60 && buzz_snoozed)
+    {
       buzzing = FALSE;
-  }
+      buzz_snoozed = FALSE;
+      buzz_seconds = 0;
+    }
+  } // alarm_on
+
 #endif
 
   //if(show_the_time == TRUE || always_on == TRUE) {
@@ -326,13 +367,16 @@ void loop()
     {
       showTemperature();
       show_the_time = FALSE; //Reset the button variable
-    } else
+    } 
+    else
+    {
       showTime(); //Show the current time for a few seconds
+    }
 
     //If you are STILL holding the button, then you must want to adjust the time
 #if ALARM_ENABLE
-    if(digitalRead(theButton) == LOW && push_counter == 1) setTime();
-    if(digitalRead(theButton) == LOW && push_counter == 2) setAlarm();
+    if(digitalRead(theButton) == LOW && push_counter == 1) setAlarm();
+    if(digitalRead(theButton) == LOW && push_counter == 2) setTime();
 #else
     if(digitalRead(theButton) == LOW) setTime();
 #endif
@@ -387,16 +431,13 @@ void showTemperature()
   
   float temp;
 
-  analogReference(INTERNAL);
-  Serial.println(analogRead(temp_sen));
-
-  temp = (analogRead(temp_sen)/1023.*1100 - 600)/10;
+  temp = (analogRead(temp_sen)/1023.*3300 - 600)/10;
 
   Serial.println(temp);
 
     //Now show the time for a certain length of time
   long startTime = millis();
-  while( (millis() - startTime) < show_time_length) {
+  while( (millis() - startTime) < show_temp_length) {
     displayTemperature((int)temp); //Each call takes about 8ms, display the colon
 
     //After the time is displayed, the segments are turned off
@@ -413,7 +454,7 @@ void showColor(char *colorName)
 
   //Now show the letters for a certain length of time
   long startTime = millis();
-  while( (millis() - startTime) < show_time_length) {
+  while( (millis() - startTime) < show_color_length) {
     displayLetters(colorName); //Each call takes about 8ms, display the colon
 
     //After the letters are displayed, the segments are turned off
@@ -459,18 +500,36 @@ void setAlarm(void)
 
     int combinedTime = (alarm_hours * 100) + alarm_minutes; //Combine the hours and minutes
 
+    if (alarm_on)
+    {
       for(int x = 0 ; x < 10 ; x++) {
-      displayNumber(combinedTime, TRUE); //Each call takes about 8ms, display the colon for about 100ms
-      delayMicroseconds(display_brightness); //Wait before we paint the display again
+        displayNumber(combinedTime, TRUE); //Each call takes about 8ms, display the colon for about 100ms
+        delayMicroseconds(display_brightness); //Wait before we paint the display again
+      }
+      for(int x = 0 ; x < 10 ; x++) {
+        displayNumber(combinedTime, FALSE); //Each call takes about 8ms, turn off the colon for about 100ms
+        delayMicroseconds(display_brightness); //Wait before we paint the display again
+      }
     }
-    for(int x = 0 ; x < 10 ; x++) {
-      displayNumber(combinedTime, FALSE); //Each call takes about 8ms, turn off the colon for about 100ms
-      delayMicroseconds(display_brightness); //Wait before we paint the display again
+
+    // Give a chance to turn alarm off at midnight,
+    // or just display when it's off
+    if (!alarm_on || (alarm_hours == 0 && alarm_minutes == 0))
+    {
+      alarm_on = FALSE;
+      for(int x = 0 ; x < 100 ; x++) {
+        displayLetters("OFF "); //Each call takes about 8ms, display the colon for about 100ms
+        delayMicroseconds(display_brightness); //Wait before we paint the display again
+      }
     }
+
 
     //If you're still hitting the button, then increase the time and reset the idleMili timeout variable
     if(digitalRead(theButton) == LOW) {
       idleMiliseconds = 0;
+
+      // turn alarm on
+      alarm_on = TRUE;
 
       buttonHold++;
       if(buttonHold < 10)
@@ -486,7 +545,10 @@ void setAlarm(void)
     else
       buttonHold = 0;
 
-    idleMiliseconds += 200;
+    if (alarm_on)
+      idleMiliseconds += 200;
+    else
+      idleMiliseconds += 1000;
   }
 }
 
@@ -692,10 +754,10 @@ void displayTemperature(int temp)
 #define DIGIT_ON  LOW
 #define DIGIT_OFF  HIGH
 
-  if (temp > 99)
-    temp = 99;
-  else if (temp < -99)
-    temp = -99;
+  if (temp > TEMP_MAX)
+    temp = TEMP_MAX;
+  else if (temp < TEMP_MIN)
+    temp = TEMP_MIN;
 
   digitalWrite(digit4, DIGIT_OFF);
   digitalWrite(colons, LOW);
@@ -949,6 +1011,22 @@ Segments
     digitalWrite(segC, SEGMENT_ON);
     digitalWrite(segD, SEGMENT_ON);
     digitalWrite(segE, SEGMENT_ON);
+    digitalWrite(segG, SEGMENT_ON);
+    break;
+
+  case 'O': //abcdef
+    digitalWrite(segA, SEGMENT_ON);
+    digitalWrite(segB, SEGMENT_ON);
+    digitalWrite(segC, SEGMENT_ON);
+    digitalWrite(segD, SEGMENT_ON);
+    digitalWrite(segE, SEGMENT_ON);
+    digitalWrite(segF, SEGMENT_ON);
+    break;
+
+  case 'F': // aefg
+    digitalWrite(segA, SEGMENT_ON);
+    digitalWrite(segE, SEGMENT_ON);
+    digitalWrite(segF, SEGMENT_ON);
     digitalWrite(segG, SEGMENT_ON);
     break;
 
