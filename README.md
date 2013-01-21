@@ -14,6 +14,8 @@ In addition it can be powered from a CR2032 battery, or from a 5V wall-wart.
 
 This project builds on the [BigTime](https://github.com/nseidle/BigTime) project by @nseidle, but the whole board was redesigned from scratch.
 
+<img src="https://dl.dropbox.com/u/78009186/Photos/2013-01-19%2015.16.09.jpg">
+
 ## Assembly
 
 Checkout the assembly guide [here](https://dl.dropbox.com/u/78009186/Documents/TokyoTime_2.1_assembly.pdf).
