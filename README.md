@@ -14,13 +14,47 @@ In addition it can be powered from a CR2032 battery, or from a 5V wall-wart.
 
 This project builds on the [BigTime](https://github.com/nseidle/BigTime) project by @nseidle, but the whole board was redesigned from scratch.
 
-### Parts and footprints
+## Assembly
 
-All the parts can be bought at [Akizuki Denshi](http://www.akizukidenshi.com/) in Akihabara, Tokyo.
+Checkout the assembly guide [here](https://dl.dropbox.com/u/78009186/Documents/TokyoTime_2.1_assembly.pdf).
 
-*Warning* I still need to check the footprint for all the parts.
+## Bootloader
 
-### License
+The bootloader needed is the "Atmega328 on a breadboard" bootloader available
+(with instructions) from the Arduino
+[website](http://arduino.cc/en/Tutorial/ArduinoToBreadboard).
+
+## Firmware
+
+* [Alarm clock](https://raw.github.com/fakufaku/TokyoTime/master/TokyoTime.pde)
+* [Oven controller](https://github.com/fakufaku/Kuishimbo)
+
+## Bill Of Material
+
+All the parts can be bought at [Akizuki Denshi](http://www.akizukidenshi.com/)
+in Akihabara, Tokyo. Equivalent parts can be found on
+[Mouser](http://www.mouser.com), but please check the datasheets to make sure
+the footprints correspond.
+
+* 1x Green 7 segment (common cathode) [OSL40562-LG](http://akizukidenshi.com/catalog/g/gI-03945/)
+* 1x 3.3V Regulator [TA48M033F](http://akizukidenshi.com/catalog/g/gI-00538/)
+* 1x [Atmega328p](http://akizukidenshi.com/catalog/g/gI-03142/)
+* 1x [28-pin socket]() (optional, allows to change chip easily)
+* 1x [Buzzer](http://akizukidenshi.com/catalog/g/gP-04118/) (13mm)
+* 1x [Tactil switch](http://akizukidenshi.com/catalog/g/gP-03651/)
+* 1x Temperature sensor [LM61CIZ](http://akizukidenshi.com/catalog/g/gI-02726/)
+* 1x [32.768 Crystal](http://akizukidenshi.com/catalog/g/gP-04005/)
+* 1x [2.1mm barrel jack](http://akizukidenshi.com/catalog/g/gC-00077/)
+* 1x [2032 coin cell holder](http://akizukidenshi.com/catalog/g/gP-00706/)
+* 4x [0.1uF cap](http://akizukidenshi.com/catalog/g/gP-00090/) (C1, C2, C3, C5) (one 0.1uF cap is included with regulator from Akizuki)
+* 1x 47uF cap (C4) (Also included with regulator from Akizuki, value may vary)
+* 2x 10K resistors (R1, R3)
+* 1K resistor (R2)
+* 1x6 pin header
+* 1x3 pin header
+* 3x2 pin header
+
+## License
 
 (c) 2011, Robin Scheibler
 
