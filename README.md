@@ -26,10 +26,24 @@ The bootloader needed is the "Atmega328 on a breadboard" bootloader available
 (with instructions) from the Arduino
 [website](http://arduino.cc/en/Tutorial/ArduinoToBreadboard).
 
+The TokyoTime doesn't have an ISP header to upload the firmware, so another
+board must be used to burn the bootloader to the chip. A standard Arduino board
+can be used.
+
 ## Firmware
 
+The TokyoTime board features a handy serial header that can be used to upload
+new code to the chip (provided it has a bootloader) with a 3.3V FTDI-to-USB converter
+such as this [one](https://www.sparkfun.com/products/9873).
+
+There are so far two different firmware for the board.
+
 * [Alarm clock](https://raw.github.com/fakufaku/TokyoTime/master/TokyoTime.pde)
-* [Oven controller](https://github.com/fakufaku/Kuishimbo)
+  : A standard clock with settable alarm and temperature reading.
+* [Oven controller](https://github.com/fakufaku/Kuishimbo) : A controller using
+  a PID loop to control the temperature of a toaster oven. There is a blog
+  [post](http://robinscheibler.org/hacks/2012/08/21/fixing-an-electric-oven/)
+  describing the whole project.
 
 ## Bill Of Material
 
