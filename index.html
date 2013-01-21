@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>TokyoTime by fakufaku</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>TokyoTime</h1>
+        <p>Not just an Arduino powered alarm clock.</p>
+
+        <p class="view"><a href="https://github.com/fakufaku/TokyoTime">View the Project on GitHub <small>fakufaku/TokyoTime</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/fakufaku/TokyoTime/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/fakufaku/TokyoTime/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/fakufaku/TokyoTime">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>Not just an arduino based alarm-clock. But much more than that. It has a Two-Wire interface, serial interface, RTC, temperature sensor and a buzzer.</p>
+
+<p>These features make it ideal for all projects where temperature and time are critical like:</p>
+
+<ul>
+<li>Waking up in the morning,</li>
+<li>Cooking,</li>
+<li>Brewing,</li>
+<li>Making yogurt,</li>
+<li>etc.</li>
+</ul><p>In addition it can be powered from a CR2032 battery, or from a 5V wall-wart.</p>
+
+<p>This project builds on the <a href="https://github.com/nseidle/BigTime">BigTime</a> project by <a href="https://github.com/nseidle" class="user-mention">@nseidle</a>, but the whole board was redesigned from scratch.</p>
+
+<p><img src="https://dl.dropbox.com/u/78009186/Photos/2013-01-19%2015.16.09.jpg"></p>
+
+<h2>Assembly</h2>
+
+<p>Checkout the assembly guide <a href="https://dl.dropbox.com/u/78009186/Documents/TokyoTime_2.1_assembly.pdf">here</a>.</p>
+
+<h2>Bootloader</h2>
+
+<p>The bootloader needed is the "Atmega328 on a breadboard" bootloader available
+(with instructions) from the Arduino
+<a href="http://arduino.cc/en/Tutorial/ArduinoToBreadboard">website</a>.</p>
+
+<p>The TokyoTime doesn't have an ISP header to upload the firmware, so another
+board must be used to burn the bootloader to the chip. A standard Arduino board
+can be used.</p>
+
+<h2>Firmware</h2>
+
+<p>The TokyoTime board features a handy serial header that can be used to upload
+new code to the chip (provided it has a bootloader) with a 3.3V FTDI-to-USB converter
+such as this <a href="https://www.sparkfun.com/products/9873">one</a>.</p>
+
+<p>There are so far two different firmware for the board.</p>
+
+<ul>
+<li>
+<a href="https://raw.github.com/fakufaku/TokyoTime/master/TokyoTime.pde">Alarm clock</a>
+: A standard clock with settable alarm and temperature reading.</li>
+<li>
+<a href="https://github.com/fakufaku/Kuishimbo">Oven controller</a> : A controller using
+a PID loop to control the temperature of a toaster oven. There is a blog
+<a href="http://robinscheibler.org/hacks/2012/08/21/fixing-an-electric-oven/">post</a>
+describing the whole project.</li>
+</ul><h2>Bill Of Material</h2>
+
+<p>All the parts can be bought at <a href="http://www.akizukidenshi.com/">Akizuki Denshi</a>
+in Akihabara, Tokyo. Equivalent parts can be found on
+<a href="http://www.mouser.com">Mouser</a>, but please check the datasheets to make sure
+the footprints correspond.</p>
+
+<ul>
+<li>1x Green 7 segment (common cathode) <a href="http://akizukidenshi.com/catalog/g/gI-03945/">OSL40562-LG</a>
+</li>
+<li>1x 3.3V Regulator <a href="http://akizukidenshi.com/catalog/g/gI-00538/">TA48M033F</a>
+</li>
+<li>1x <a href="http://akizukidenshi.com/catalog/g/gI-03142/">Atmega328p</a>
+</li>
+<li>1x <a href="">28-pin socket</a> (optional, allows to change chip easily)</li>
+<li>1x <a href="http://akizukidenshi.com/catalog/g/gP-04118/">Buzzer</a> (13mm)</li>
+<li>1x <a href="http://akizukidenshi.com/catalog/g/gP-03651/">Tactil switch</a>
+</li>
+<li>1x Temperature sensor <a href="http://akizukidenshi.com/catalog/g/gI-02726/">LM61CIZ</a>
+</li>
+<li>1x <a href="http://akizukidenshi.com/catalog/g/gP-04005/">32.768 Crystal</a>
+</li>
+<li>1x <a href="http://akizukidenshi.com/catalog/g/gC-00077/">2.1mm barrel jack</a>
+</li>
+<li>1x <a href="http://akizukidenshi.com/catalog/g/gP-00706/">2032 coin cell holder</a>
+</li>
+<li>4x <a href="http://akizukidenshi.com/catalog/g/gP-00090/">0.1uF cap</a> (C1, C2, C3, C5) (one 0.1uF cap is included with regulator from Akizuki)</li>
+<li>1x 47uF cap (C4) (Also included with regulator from Akizuki, value may vary)</li>
+<li>2x 10K resistors (R1, R3)</li>
+<li>1K resistor (R2)</li>
+<li>1x6 pin header</li>
+<li>1x3 pin header</li>
+<li>3x2 pin header</li>
+</ul><h2>License</h2>
+
+<p>(c) 2011, Robin Scheibler</p>
+
+<p>This work is realeased under the <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">CC-BY-SA 3.0</a> License.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/fakufaku">fakufaku</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
