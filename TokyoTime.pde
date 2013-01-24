@@ -75,11 +75,17 @@ int TwelveHourMode = FALSE;
 int show_time_length = 700;
 int show_temp_length = 2000;
 int show_color_length = 2000;
-int show_the_time = FALSE;
+int show_the_temp = FALSE;
+
+// Here show_the_time is a counter that conatins number of
+// times the time should be show for a duration of show_time_length.
+// So in total, time will be displayed for show_the_time x show_the_length ms.
+int show_the_time = 0;  // number of time length time to display Time
+int show_time_n = 7;
 
 //You can set always_on to true and the display will stay on all the time
 //This will drain the battery in about 15 hours 
-int always_on = TRUE;
+int always_on = FALSE;
 
 long seconds = 55;
 int minutes = 12;
@@ -132,7 +138,11 @@ int buzzer = 9;      // the buzzer to wake you up
 int theButton = 2;
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-// Temperature sensing range
+// Temperature parameters
+#define ANALOG_REF INTERNAL
+#define VOLTAGE_REF 1077
+#define temp_sense_on() digitalWrite(temp_pwr, HIGH);
+#define temp_sense_off() digitalWrite(temp_pwr, LOW);
 #define TEMP_MAX  60
 #define TEMP_MIN -60
 
@@ -162,9 +172,12 @@ SIGNAL(TIMER2_OVF_vect)
 //The interrupt occurs when you push the button
 SIGNAL(INT0_vect)
 {
+  if (show_the_time > 0 || always_on == TRUE)
+    show_the_temp = TRUE; // if the clock is already on, then show temperature instead
+
   //When you hit the button, we will need to display the time
-  //if(show_the_time == FALSE) 
-  show_the_time = TRUE;
+  show_the_time = show_time_n;
+
   // turn buzzer off (in case alarm is ringing)
   if (buzzing)
     buzz_snoozed = TRUE;
@@ -213,12 +226,12 @@ void setup()
 
   // set the power pin for the temperature sensor
   pinMode(temp_pwr, OUTPUT);
-  digitalWrite(temp_pwr, HIGH);
+  digitalWrite(temp_pwr, LOW);
 
   // we set the ADC reference to 3.3V
   // this does not give correct temperature
   // when running on the battery
-  analogReference(DEFAULT);
+  analogReference(ANALOG_REF);
 
 
   // set buzzer as digital Output
@@ -289,10 +302,9 @@ void setup()
 
 void loop()
 {
-  if(always_on == FALSE)
+  if(!buzzing && show_the_time == 0 && always_on == FALSE)
     sleep_mode(); //Stop everything and go to sleep. Wake up if the Timer2 buffer overflows or if you hit the button
 
-#if ALARM_ENABLE
   if (alarm_on)
   {
     // Control the buzzer
@@ -303,27 +315,30 @@ void loop()
       buzz_seconds = 0;
     }
     
-    if (buzzing && !buzz_snoozed)
+    if (buzzing)
     {
-      // We have to excite the buzzer manually
-      // because the tone function can't be used
-      // since TIMER2 is occupied by the RTC
-      int k = 400;
-      while (k-- > 0)
+      if (!buzz_snoozed)
       {
-        PORTB |= _BV(PORTB1);
-        delayMicroseconds(100);
-        PORTB &= ~_BV(PORTB1);
-        delayMicroseconds(100);
-      }
-      delay(100);
-      k = 400;
-      while (k-- > 0)
-      {
-        PORTB |= _BV(PORTB1);
-        delayMicroseconds(100);
-        PORTB &= ~_BV(PORTB1);
-        delayMicroseconds(100);
+        // We have to excite the buzzer manually
+        // because the tone function can't be used
+        // since TIMER2 is occupied by the RTC
+        int k = 400;
+        while (k-- > 0)
+        {
+          PORTB |= _BV(PORTB1);
+          delayMicroseconds(100);
+          PORTB &= ~_BV(PORTB1);
+          delayMicroseconds(100);
+        }
+        delay(100);
+        k = 400;
+        while (k-- > 0)
+        {
+          PORTB |= _BV(PORTB1);
+          delayMicroseconds(100);
+          PORTB &= ~_BV(PORTB1);
+          delayMicroseconds(100);
+        }
       }
 
       // measure how long the buzzer has been running
@@ -345,7 +360,7 @@ void loop()
 
     // If we hit snooze and time is over a minute
     // reset the buzzer
-    if (buzz_seconds > 60 && buzz_snoozed)
+    if (buzz_seconds > 120 && buzz_snoozed)
     {
       buzzing = FALSE;
       buzz_snoozed = FALSE;
@@ -353,24 +368,25 @@ void loop()
     }
   } // alarm_on
 
-#endif
 
-  //if(show_the_time == TRUE || always_on == TRUE) {
-  if(always_on == TRUE) {
+  // Display Control
+  if(buzzing || show_the_time > 0 || always_on == TRUE) {
 
     /*Serial.print(hours, DEC);
      Serial.print(":");
      Serial.print(minutes, DEC);
      Serial.print(":");
      Serial.println(seconds, DEC);*/
-    if (show_the_time == TRUE)
+    if (show_the_temp == TRUE)
     {
       showTemperature();
-      show_the_time = FALSE; //Reset the button variable
+      show_the_temp = FALSE; //Reset the button variable
     } 
     else
     {
       showTime(); //Show the current time for a few seconds
+      if (show_the_time > 0)
+        show_the_time--;
     }
 
     //If you are STILL holding the button, then you must want to adjust the time
@@ -383,7 +399,7 @@ void loop()
 
   } 
 
-  if (show_the_time == FALSE)
+  if (show_the_time < show_time_n)
     push_counter = 0;
 }
 
@@ -431,11 +447,15 @@ void showTemperature()
   
   float temp;
 
-  temp = (analogRead(temp_sen)/1023.*3300 - 600)/10;
+  temp_sense_on();
+  delay(50);
 
-  Serial.println(temp);
 
-    //Now show the time for a certain length of time
+  temp = (analogRead(temp_sen)/1024.*VOLTAGE_REF - 600)/10;
+
+  temp_sense_off();
+
+  //Now show the time for a certain length of time
   long startTime = millis();
   while( (millis() - startTime) < show_temp_length) {
     displayTemperature((int)temp); //Each call takes about 8ms, display the colon
