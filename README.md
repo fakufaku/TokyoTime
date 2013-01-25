@@ -30,6 +30,11 @@ The TokyoTime doesn't have an ISP header to upload the firmware, so another
 board must be used to burn the bootloader to the chip. A standard Arduino board
 can be used.
 
+The fuse should be set to use the internal 8MHz oscillator and the brown-out threshold should be no more than 1.8V. The fuse can be burnt with avrdude
+using the following command
+
+    -U lfuse:w:0xe2:m -U hfuse:w:0xda:m -U efuse:w:0x06:m
+
 ## Firmware
 
 The TokyoTime board features a handy serial header that can be used to upload
