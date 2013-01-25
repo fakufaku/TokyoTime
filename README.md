@@ -43,7 +43,7 @@ such as this [one](https://www.sparkfun.com/products/9873).
 
 There are so far two different firmware for the board.
 
-* [Alarm clock](https://raw.github.com/fakufaku/TokyoTime/master/TokyoTime.pde)
+* [Alarm clock](https://raw.github.com/fakufaku/TokyoTime/master/TokyoTime.ino)
   : A standard clock with settable alarm and temperature reading.
 * [Oven controller](https://github.com/fakufaku/Kuishimbo) : A controller using
   a PID loop to control the temperature of a toaster oven. There is a blog
