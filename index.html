@@ -28,7 +28,7 @@
         </ul>
       </header>
       <section>
-        <p>Not just an arduino based alarm-clock. But much more than that. It has a Two-Wire interface, serial interface, RTC, temperature sensor and a buzzer.</p>
+        <p>Not just another arduino based alarm-clock. But much more than that. It has a Two-Wire interface, serial interface, RTC, temperature sensor and a buzzer.</p>
 
 <p>These features make it ideal for all projects where temperature and time are critical like:</p>
 
@@ -57,6 +57,12 @@
 <p>The TokyoTime doesn't have an ISP header to upload the firmware, so another
 board must be used to burn the bootloader to the chip. A standard Arduino board
 can be used.</p>
+
+<p>The fuse should be set to use the internal 8MHz oscillator and the brown-out threshold should be no more than 1.8V. The fuse can be burnt with avrdude
+using the following command</p>
+
+<pre><code>-U lfuse:w:0xe2:m -U hfuse:w:0xda:m -U efuse:w:0x06:m
+</code></pre>
 
 <h2>Firmware</h2>
 
