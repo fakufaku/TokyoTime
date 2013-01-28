@@ -243,8 +243,8 @@ void setup()
 
   //Shut off ADC, TWI, SPI, Timer0, Timer1
 
-  //ADCSRA &= ~(1<<ADEN); //Disable ADC
-  //ACSR = (1<<ACD); //Disable the analog comparator
+  ADCSRA &= ~(1<<ADEN); //Disable ADC
+  ACSR = (1<<ACD); //Disable the analog comparator
   //DIDR0 = 0x3F; //Disable digital input buffers on all ADC0-ADC5 pins
   //DIDR1 = (1<<AIN1D)|(1<<AIN0D); //Disable digital input buffer on AIN1/0
 
@@ -447,6 +447,8 @@ void showTemperature()
   
   float temp;
 
+
+  ADCSRA |= (1<<ADEN); //Enable ADC
   temp_sense_on();
   delay(50);
 
@@ -454,6 +456,7 @@ void showTemperature()
   temp = (analogRead(temp_sen)/1024.*VOLTAGE_REF - 600)/10;
 
   temp_sense_off();
+  ADCSRA &= ~(1<<ADEN); //Disable ADC
 
   //Now show the time for a certain length of time
   long startTime = millis();
