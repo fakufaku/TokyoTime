@@ -26,12 +26,18 @@ The bootloader needed is the "Atmega328 on a breadboard" bootloader available
 (with instructions) from the Arduino
 [website](http://arduino.cc/en/Tutorial/ArduinoToBreadboard).
 
+The bootloader add-on files for Arduino IDE are located in `firmware/hardware`.
+To install them, simply copy the `firmware/hardware` to the local Arduino
+folder.
+
 The TokyoTime doesn't have an ISP header to upload the firmware, so another
 board must be used to burn the bootloader to the chip. A standard Arduino board
 can be used.
 
-The fuse should be set to use the internal 8MHz oscillator and disable the brown-out threshold. The fuse can be burnt with avrdude
-using the following command
+The fuse should be set automatically when burning the bootloader using Arduino IDE.
+If not, the fuse should be set to use the internal 8MHz oscillator and disable
+the brown-out threshold. The fuse can be burnt with avrdude using the following
+command
 
     -U lfuse:w:0xe2:m -U hfuse:w:0xda:m -U efuse:w:0x07:m
 
@@ -41,14 +47,22 @@ The TokyoTime board features a handy serial header that can be used to upload
 new code to the chip (provided it has a bootloader) with a 3.3V FTDI-to-USB converter
 such as this [one](https://www.sparkfun.com/products/9873).
 
-There are so far two different firmware for the board.
+There are so far three different firmware for the board.
 
-* [Alarm clock](https://raw.github.com/fakufaku/TokyoTime/master/TokyoTime.ino)
-  : A standard clock with settable alarm and temperature reading.
-* [Oven controller](https://github.com/fakufaku/Kuishimbo) : A controller using
-  a PID loop to control the temperature of a toaster oven. There is a blog
+* **TokyoTime** `firmware/TokyoTime` -- A standard clock with settable alarm
+  and temperature reading. 
+* **Kuishimbo** `firmware/Kuishimbo` -- A controller using a PID loop to
+  control the temperature of a toaster oven. There is a blog
   [post](http://robinscheibler.org/hacks/2012/08/21/fixing-an-electric-oven/)
-  describing the whole project.
+  describing the whole project.  This firmware requires the Arduino PID library
+  located in `firmware/libraries`. It can be copied to the local Arduino.
+* **TokyoIncubator** `firmware/TokyoIncubator` -- A controller using a PID loop
+  to control the temperature of an incubator for bacteria, yoghurt or natto
+  culture. This was later spun into a
+  [project](https://github.com/BioDesignRealWorld/Fermento) of its
+  [own](http://biodesign.cc/2013/12/25/diy-incubator/). This firmware requires the
+  Arduino PID library located in `firmware/libraries`. It can be copied to the
+  local Arduino.
 
 ## Bill Of Material
 
