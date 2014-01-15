@@ -28,7 +28,7 @@
         </ul>
       </header>
       <section>
-        <p>Not just another arduino based alarm-clock. But much more than that. It has a Two-Wire interface, serial interface, RTC, temperature sensor and a buzzer.</p>
+        <p>Not just another Arduino based alarm-clock. But much more than that. It has a Two-Wire interface, serial interface, RTC, temperature sensor and a buzzer.</p>
 
 <p>These features make it ideal for all projects where temperature and time are critical like:</p>
 
@@ -44,44 +44,63 @@
 
 <p><img src="https://dl.dropbox.com/u/78009186/Photos/2013-01-19%2015.16.09.jpg"></p>
 
-<h2>Assembly</h2>
+<h2>
+<a name="assembly" class="anchor" href="#assembly"><span class="octicon octicon-link"></span></a>Assembly</h2>
 
 <p>Checkout the assembly guide <a href="https://dl.dropbox.com/u/78009186/Documents/TokyoTime_2.1_assembly.pdf">here</a>.</p>
 
-<h2>Bootloader</h2>
+<h2>
+<a name="bootloader" class="anchor" href="#bootloader"><span class="octicon octicon-link"></span></a>Bootloader</h2>
 
 <p>The bootloader needed is the "Atmega328 on a breadboard" bootloader available
 (with instructions) from the Arduino
 <a href="http://arduino.cc/en/Tutorial/ArduinoToBreadboard">website</a>.</p>
 
+<p>The bootloader add-on files for Arduino IDE are located in <code>firmware/hardware</code>.
+To install them, simply copy the <code>firmware/hardware</code> to the local Arduino
+folder.</p>
+
 <p>The TokyoTime doesn't have an ISP header to upload the firmware, so another
 board must be used to burn the bootloader to the chip. A standard Arduino board
 can be used.</p>
 
-<p>The fuse should be set to use the internal 8MHz oscillator and the brown-out threshold should be no more than 1.8V. The fuse can be burnt with avrdude
-using the following command</p>
+<p>The fuse should be set automatically when burning the bootloader using Arduino IDE.
+If not, the fuse should be set to use the internal 8MHz oscillator and disable
+the brown-out threshold. The fuse can be burnt with avrdude using the following
+command</p>
 
-<pre><code>-U lfuse:w:0xe2:m -U hfuse:w:0xda:m -U efuse:w:0x06:m
+<pre><code>-U lfuse:w:0xe2:m -U hfuse:w:0xda:m -U efuse:w:0x07:m
 </code></pre>
 
-<h2>Firmware</h2>
+<h2>
+<a name="firmware" class="anchor" href="#firmware"><span class="octicon octicon-link"></span></a>Firmware</h2>
 
 <p>The TokyoTime board features a handy serial header that can be used to upload
 new code to the chip (provided it has a bootloader) with a 3.3V FTDI-to-USB converter
 such as this <a href="https://www.sparkfun.com/products/9873">one</a>.</p>
 
-<p>There are so far two different firmware for the board.</p>
+<p>There are so far three different firmware for the board.</p>
 
 <ul>
 <li>
-<a href="https://raw.github.com/fakufaku/TokyoTime/master/TokyoTime.ino">Alarm clock</a>
-: A standard clock with settable alarm and temperature reading.</li>
+<strong>TokyoTime</strong> <code>firmware/TokyoTime</code> -- A standard clock with settable alarm
+and temperature reading. </li>
 <li>
-<a href="https://github.com/fakufaku/Kuishimbo">Oven controller</a> : A controller using
-a PID loop to control the temperature of a toaster oven. There is a blog
+<strong>Kuishimbo</strong> <code>firmware/Kuishimbo</code> -- A controller using a PID loop to
+control the temperature of a toaster oven. There is a blog
 <a href="http://robinscheibler.org/hacks/2012/08/21/fixing-an-electric-oven/">post</a>
-describing the whole project.</li>
-</ul><h2>Bill Of Material</h2>
+describing the whole project.  This firmware requires the Arduino PID library
+located in <code>firmware/libraries</code>. It can be copied to the local Arduino.</li>
+<li>
+<strong>TokyoIncubator</strong> <code>firmware/TokyoIncubator</code> -- A controller using a PID loop
+to control the temperature of an incubator for bacteria, yoghurt or natto
+culture. This was later spun into a
+<a href="https://github.com/BioDesignRealWorld/Fermento">project</a> of its
+<a href="http://biodesign.cc/2013/12/25/diy-incubator/">own</a>. This firmware requires the
+Arduino PID library located in <code>firmware/libraries</code>. It can be copied to the
+local Arduino.</li>
+</ul><h2>
+<a name="bill-of-material" class="anchor" href="#bill-of-material"><span class="octicon octicon-link"></span></a>Bill Of Material</h2>
 
 <p>All the parts can be bought at <a href="http://www.akizukidenshi.com/">Akizuki Denshi</a>
 in Akihabara, Tokyo. Equivalent parts can be found on
@@ -114,7 +133,8 @@ the footprints correspond.</p>
 <li>1x6 pin header</li>
 <li>1x3 pin header</li>
 <li>3x2 pin header</li>
-</ul><h2>License</h2>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>(c) 2011, Robin Scheibler</p>
 
