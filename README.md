@@ -91,6 +91,6 @@ the footprints correspond.
 
 ## License
 
-(c) 2011, Robin Scheibler
+(c) 2011-2014, Robin Scheibler
 
 This work is realeased under the [CC-BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/us/) License.
