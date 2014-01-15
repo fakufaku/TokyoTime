@@ -21,7 +21,7 @@
 #define BLUE  3
 #define YELLOW  4
 int systemColor = GREEN;
-int display_brightness = 15000; //A larger number makes the display more dim. This is set correctly below.
+int display_brightness = 8000; //A larger number makes the display more dim. This is set correctly below.
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //Pin definitions
@@ -63,25 +63,50 @@ unsigned long windowStartTime;
 const static int pwm_pin = A5;  // SCL, brown wire
 
 // control variables for PID
-double t_oven;      // input to PID
-double t_oven_N;    // number of samples in t_oven average
+double t_incub;      // input to PID
+double t_incub_N;    // number of samples in t_incub average
 double pwm_duty;    // output of PID
 double t_set = 0; // set point
 
 // oven max temperature
-#define MAX_OVEN_TEMP 50
+#define MAX_TEMP 50
+#define TEMP_INCREMENT 1
+#define MAX_TIME (24*60*60)
+#define TIME_INCREMENT 60
 
 //Specify the links and initial tuning parameters
 double kp=50,ki=0.3
 ,kd=1;
-PID myPID(&t_oven, &pwm_duty, &t_set, kp, ki, kd, DIRECT);
+PID myPID(&t_incub, &pwm_duty, &t_set, kp, ki, kd, DIRECT);
 
 // display timer (freeze parameters to display for 2 seconds)
-int t_oven_disp;
+int t_incub_disp;
+
+// Timer variables
+unsigned long timer_seconds = 0;
+
+//The very important 32.768 interrupt handler
+SIGNAL(TIMER2_OVF_vect)
+{
+  if (timer_seconds > 1)
+  {
+    timer_seconds--;
+  }
+  else if (timer_seconds == 1)
+  {
+    // reset timer
+    timer_seconds = 0;
+    // turn off by setting target temperature to zero
+    t_set = 0;
+    // Reset the PID
+    myPID.SetMode(MANUAL);
+    myPID.SetMode(AUTOMATIC);
+  }
+}
 
 void setup()
 {
-  Serial.begin(57600);
+  //Serial.begin(57600);
 
   // set ADC reference to 3.3V
   analogReference(DEFAULT);
@@ -100,6 +125,12 @@ void setup()
   // initialize the button
   pinMode(theButton, INPUT);
   digitalWrite(theButton, HIGH); // pull-up
+
+  //Setup TIMER2
+  TCCR2A = 0x00;
+  TCCR2B = (1<<CS22)|(1<<CS20); //Set CLK/128 or overflow interrupt every 1s
+  ASSR   = (1<<AS2); //Enable asynchronous operation
+  TIMSK2 = (1<<TOIE2); //Enable the timer 2 interrupt
 
   //These pins are used to control the display
   pinMode(segA, OUTPUT);
@@ -124,11 +155,11 @@ void setup()
 
   // initialize pwm
   pwm_duty = 0; // off
-  t_oven = read_ext_temperature();
-  t_oven_N = 1;
+  t_incub = read_temperature();
+  t_incub_N = 1;
 
   // initialize slow variables for display
-  t_oven_disp = t_oven;
+  t_incub_disp = t_incub;
 
 }
 
@@ -138,10 +169,15 @@ void loop()
   temperatureControl();
 
   // display and output to serial
-  displayNumber((int)(t_oven_disp), FALSE); //Each call takes about 8ms, display the colon
+  displayTemperature((int)(t_incub_disp), FALSE); //Each call takes about 8ms, display the colon
 
   if (digitalRead(theButton) == LOW)
-    setOvenTemperature();
+  {
+    // set temperature first
+    setTemperature();
+    // then time
+    setTime();
+  }
 
 }
 
@@ -151,29 +187,20 @@ void temperatureControl()
 
   unsigned long now = millis();
 
-  t_oven += (read_ext_temperature() - t_oven)/(++t_oven_N);
+  t_incub += (read_temperature() - t_incub)/(++t_incub_N);
 
   if(now - windowStartTime > PWM_MS)
   { 
     // compute new pwm value for that window
     myPID.Compute();
 
-    // display some stuff in serial.
-    int t_ext = read_ext_temperature();
-    Serial.print(t_oven);
-    Serial.print(" ");
-    Serial.print(t_ext);
-    Serial.print(" ");
-    Serial.print(pwm_duty);
-    Serial.println();
-
     // start a new relay window
     windowStartTime = now;
 
     // restart averaging of oven temperature
-    t_oven_disp = t_oven;
-    t_oven = read_ext_temperature();
-    t_oven_N = 1;
+    t_incub_disp = t_incub;
+    t_incub = read_temperature();
+    t_incub_N = 1;
 
   }
 
@@ -200,7 +227,7 @@ void temperatureControl()
   }
 }
 
-float read_ext_temperature()
+float read_temperature()
 {
   float A = 0;
   for (int i=0 ; i < 10 ; i++)
@@ -213,7 +240,7 @@ float read_ext_temperature()
 //The colon blinks indicating we are in this mode
 //Holding the button down will increase the time (accelerates)
 //Releasing the button for more than 2 seconds will exit this mode
-void setOvenTemperature()
+void setTemperature()
 {
 
   int idleMiliseconds = 0;
@@ -222,12 +249,12 @@ void setOvenTemperature()
 
   while(idleMiliseconds < 2000) {
 
-    for(int x = 0 ; x < 10 ; x++) {
-      displayNumber(t_set, TRUE); //Each call takes about 8ms, display the colon for about 100ms
+    for(int x = 0 ; x < 7 ; x++) {
+      displayTemperature(t_set, TRUE); //Each call takes about 8ms, display the colon for about 100ms
       delayMicroseconds(display_brightness); //Wait before we paint the display again
     }
-    for(int x = 0 ; x < 10 ; x++) {
-      displayNumber(t_set, FALSE); //Each call takes about 8ms, turn off the colon for about 100ms
+    for(int x = 0 ; x < 7 ; x++) {
+      displayTemperature(t_set, FALSE); //Each call takes about 8ms, turn off the colon for about 100ms
       delayMicroseconds(display_brightness); //Wait before we paint the display again
     }
 
@@ -235,7 +262,43 @@ void setOvenTemperature()
     if(digitalRead(theButton) == LOW) {
       idleMiliseconds = 0;
 
-      t_set = ((int)(t_set+1) % MAX_OVEN_TEMP); // Increase temperature
+      t_set = ((int)(t_set+TEMP_INCREMENT) % MAX_TEMP); // Increase temperature
+    }
+
+    idleMiliseconds += 200;
+  }
+}
+
+//This routine occurs when you hold the button 2 down
+//The colon blinks indicating we are in this mode
+//Holding the button down will increase the time (accelerates)
+//Releasing the button for more than 2 seconds will exit this mode
+void setTime()
+{
+  int idleMiliseconds = 0;
+  //This is the timeout counter. Once we get to ~2 seconds of inactivity, the watch
+  //will exit the setTime function and return to normal operation
+
+  while(idleMiliseconds < 2000) 
+  {
+
+    int timer_disp = (timer_seconds/3600)*100 + (timer_seconds/60)%60 
+      + (timer_seconds % 60 == 0 ? 0 : 1);
+
+    for(int x = 0 ; x < 10 ; x++) {
+      displayTime(timer_disp, TRUE); //Each call takes about 8ms, display the colon for about 100ms
+      delayMicroseconds(display_brightness); //Wait before we paint the display again
+    }
+    for(int x = 0 ; x < 10 ; x++) {
+      displayTime(timer_disp, FALSE); //Each call takes about 8ms, turn off the colon for about 100ms
+      delayMicroseconds(display_brightness); //Wait before we paint the display again
+    }
+
+    //If you're still hitting the button, then increase the time and reset the idleMili timeout variable
+    if(digitalRead(theButton) == LOW) {
+      idleMiliseconds = 0;
+
+      timer_seconds = ((int)(timer_seconds+TIME_INCREMENT) % MAX_TIME); // Increase timer
     }
 
     idleMiliseconds += 200;
@@ -247,10 +310,72 @@ void setOvenTemperature()
 /* Routines to display on 7-segment */
 /************************************/
 
-//Given 1022, we display "10:22"
+//Given 102, we display "102.°"
 //Each digit is displayed for ~2000us, and cycles through the 4 digits
 //After running through the 4 numbers, the display is turned off
-void displayNumber(int toDisplay, boolean displayColon)
+void displayTemperature(int toDisplay, boolean displayColon)
+{
+
+#define DIGIT_ON   LOW
+#define DIGIT_OFF  HIGH
+
+  for(int digit = 4 ; digit > 0 ; digit--) {
+
+    //Turn on a digit for a short amount of time
+    switch(digit) {
+    case 1:
+      digitalWrite(digit1, DIGIT_ON);
+      digitalWrite(colons, LOW);
+      break;
+    case 2:
+      digitalWrite(digit2, DIGIT_ON);
+      digitalWrite(colons, LOW);
+      break;
+    case 3:
+      digitalWrite(digit3, DIGIT_ON);
+      if(displayColon == TRUE) 
+        digitalWrite(colons, HIGH); //When we update digit 2, let's turn on colons as well
+      else
+        digitalWrite(colons, LOW);
+      break;
+    case 4:
+      digitalWrite(digit4, DIGIT_ON);
+      digitalWrite(colons, LOW);
+      break;
+    }
+
+    //Now display this digit
+    if (digit != 4)
+    {
+      if( (toDisplay/10 != 0) || (toDisplay % 10) != 0) // do not display leading zeros
+        lightNumber(toDisplay % 10); //Turn on the right segments for this digit
+
+      toDisplay /= 10;
+    }
+    else
+    {
+      lightNumber('º');
+    }
+
+    delayMicroseconds(2000); //Display this digit for a fraction of a second (between 1us and 5000us, 500-2000 is pretty good)
+    //If you set this too long, the display will start to flicker. Set it to 25000 for some fun.
+
+    //Turn off all segments
+    lightNumber(10);
+
+    //Turn off all digits
+    digitalWrite(digit1, DIGIT_OFF);
+    digitalWrite(digit2, DIGIT_OFF);
+    digitalWrite(digit3, DIGIT_OFF);
+    digitalWrite(digit4, DIGIT_OFF);
+    digitalWrite(colons, DIGIT_OFF);
+  }
+
+}
+//Given 1022, we display "10.22"
+//Each digit is displayed for ~2000us, and cycles through the 4 digits
+//After running through the 4 numbers, the display is turned off
+void displayTime(int toDisplay, boolean displayColon)
 {
 
 #define DIGIT_ON   LOW
@@ -282,8 +407,7 @@ void displayNumber(int toDisplay, boolean displayColon)
     }
 
     //Now display this digit
-    if( (toDisplay/10 != 0) || (toDisplay % 10) != 0) // do not display leading zeros
-      lightNumber(toDisplay % 10); //Turn on the right segments for this digit
+    lightNumber(toDisplay % 10); //Turn on the right segments for this digit
 
     toDisplay /= 10;
 
@@ -541,6 +665,13 @@ Segments
     digitalWrite(segC, SEGMENT_ON);
     digitalWrite(segD, SEGMENT_ON);
     digitalWrite(segE, SEGMENT_ON);
+    digitalWrite(segG, SEGMENT_ON);
+    break;
+
+  case 'º': // abfg
+    digitalWrite(segA, SEGMENT_ON);
+    digitalWrite(segB, SEGMENT_ON);
+    digitalWrite(segF, SEGMENT_ON);
     digitalWrite(segG, SEGMENT_ON);
     break;
 
