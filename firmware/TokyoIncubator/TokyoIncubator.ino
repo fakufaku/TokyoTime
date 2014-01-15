@@ -1,6 +1,6 @@
 
 /*
- * (c) Fakufaku 2012
+ * (c) Fakufaku 2014
  * This is the code I use to control an oven I hacked.
  * This code is released under the beerware license, i.e. if you use it, and it is useful, pay me beer, maybe.
  * The part of the code that's used for the display on the 7-segment was ripped off the BigTime code from Nathan Seidl. I owe him a beer then.
